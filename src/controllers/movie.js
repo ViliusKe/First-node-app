@@ -82,4 +82,17 @@ const INSERT_MOVIE = (req, res) => {
   });
 };
 
-export { MOVIE_LIST, MOVIE_LIST_BY_ID, MOVIE_LIST_SORTED, INSERT_MOVIE };
+const DELETE_ALL_MOVIES = (req, res) => {
+  movies = [];
+  return res.status(200).json({
+    message: "All movies were deleted",
+  });
+};
+
+export {
+  MOVIE_LIST,
+  MOVIE_LIST_BY_ID,
+  MOVIE_LIST_SORTED,
+  INSERT_MOVIE,
+  DELETE_ALL_MOVIES,
+};
