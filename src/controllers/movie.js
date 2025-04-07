@@ -14,6 +14,15 @@ let movies = [
       "A group of vigilantes set out to take down corrupt superheroes who abuse their superpowers.",
     imdbLink: "https://www.imdb.com/title/tt1190634/",
   },
+  {
+    id: "3",
+    title: "Inglourious Basterds",
+    raiting: 84,
+    description:
+      "In Nazi-occupied France during World War II, a plan to assassinate Nazi leaders by a group of Jewish U.S. soldiers coincides with a theatre owner's vengeful plans for the same.",
+    imdbLink:
+      "https://www.imdb.com/title/tt0361748/?ref_=tt_tpks_i_6_pd_detail_2_pbr_ic",
+  },
 ];
 
 const MOVIE_LIST = (req, res) => {
