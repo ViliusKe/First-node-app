@@ -1,92 +1,127 @@
-let movies = [
-  {
-    id: "1",
-    title: "Pulp Fiction",
-    raiting: 92,
-    description: "American independent crime film.",
-    imdbLink: "https://www.imdb.com/title/tt0110912/",
-  },
-  {
-    id: "2",
-    title: "The Boys",
-    raiting: 86,
-    description:
-      "A group of vigilantes set out to take down corrupt superheroes who abuse their superpowers.",
-    imdbLink: "https://www.imdb.com/title/tt1190634/",
-  },
-  {
-    id: "3",
-    title: "Inglourious Basterds",
-    raiting: 84,
-    description:
-      "In Nazi-occupied France during World War II, a plan to assassinate Nazi leaders by a group of Jewish U.S. soldiers coincides with a theatre owner's vengeful plans for the same.",
-    imdbLink:
-      "https://www.imdb.com/title/tt0361748/?ref_=tt_tpks_i_6_pd_detail_2_pbr_ic",
-  },
-];
+import MovieModel from "../models/movie.js";
+import { v4 as uuidv4 } from "uuid";
 
-const MOVIE_LIST = (req, res) => {
-  if (!movies.length) {
-    return res.status(404).json({
-      message: "There are no movies",
+const MOVIE_LIST = async (req, res) => {
+  try {
+    const response = await MovieModel.find();
+
+    return res.status(200).json({
+      movies: response,
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(400).json({
+      message: "Problems occured",
     });
   }
-  return res.status(200).json({
-    movies: movies,
-  });
 };
 
-const MOVIE_LIST_BY_ID = (req, res) => {
-  const id = req.params.id;
+const MOVIE_LIST_BY_ID = async (req, res) => {
+  try {
+    const response = await MovieModel.findOne({ id: req.params.id });
 
-  const movie = movies.find((m) => m.id === id);
+    if (!response) {
+      return res.status(404).json({
+        message: `Movie with id ${req.params.id} does not exist`,
+      });
+    }
 
-  if (!movie) {
-    return res.status(404).json({
-      message: `Movie with id ${id} does not exist`,
+    return res.status(200).json({
+      movie: response,
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(400).json({
+      message: "Problems occured",
     });
   }
-  return res.status(200).json({
-    movie: movie,
-  });
 };
 
-const MOVIE_LIST_SORTED = (req, res) => {
-  if (!movies.length) {
-    return res.status(404).json({
-      message: "There are no movies",
+const MOVIE_LIST_SORTED = async (req, res) => {
+  try {
+    const response = await MovieModel.find();
+    const sortedMovies = [...response].sort((a, b) => b.raiting - a.raiting);
+
+    return res.status(200).json({
+      movies: sortedMovies,
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(400).json({
+      message: "Problems occured",
     });
   }
-  const sortedMovies = [...movies].sort((a, b) => b.raiting - a.raiting);
-
-  return res.status(200).json({
-    message: "ok",
-    movies: sortedMovies,
-  });
 };
 
-const INSERT_MOVIE = (req, res) => {
-  const movie = {
-    // id: uuidv4(),
-    id: req.body.id,
-    title: req.body.title,
-    raiting: req.body.raiting,
-    description: req.body.description,
-    imdbLink: req.body.imdbLink,
-  };
+const INSERT_MOVIE = async (req, res) => {
+  try {
+    const movie = new MovieModel({
+      id: uuidv4(),
+      title: req.body.title,
+      raiting: req.body.raiting,
+      description: req.body.description,
+      imdbLink: req.body.imdbLink,
+    });
 
-  movies.push(movie);
+    const response = await movie.save();
 
-  return res.status(201).json({
-    message: "ok",
-  });
+    return res.status(201).json({
+      message: "ok",
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(400).json({
+      message: "Problems occured",
+    });
+  }
 };
 
-const DELETE_ALL_MOVIES = (req, res) => {
-  movies = [];
-  return res.status(200).json({
-    message: "All movies were deleted",
-  });
+const DELETE_MOVIE_BY_ID = async (req, res) => {
+  try {
+    const response = await MovieModel.deleteOne({ id: req.params.id });
+
+    if (!response) {
+      return res.status(404).json({
+        message: `Movie with id ${req.params.id} does not exist`,
+      });
+    }
+
+    return res.status(200).json({
+      message: `Movie with id ${req.params.id} was removed`,
+      movie: response,
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(400).json({
+      message: "Problems occured",
+    });
+  }
+};
+
+const UPDATE_MOVIE = async (req, res) => {
+  try {
+    const response = await MovieModel.findOneAndUpdate(
+      { id: req.params.id },
+      { ...req.body },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      message: "updated",
+      response: response,
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(400).json({
+      message: "Problems occured",
+    });
+  }
 };
 
 export {
@@ -94,5 +129,6 @@ export {
   MOVIE_LIST_BY_ID,
   MOVIE_LIST_SORTED,
   INSERT_MOVIE,
-  DELETE_ALL_MOVIES,
+  DELETE_MOVIE_BY_ID,
+  UPDATE_MOVIE,
 };

@@ -4,21 +4,24 @@ import {
   MOVIE_LIST_BY_ID,
   MOVIE_LIST_SORTED,
   INSERT_MOVIE,
-  DELETE_ALL_MOVIES,
+  DELETE_MOVIE_BY_ID,
+  UPDATE_MOVIE,
 } from "../controllers/movie.js";
-
-import { v4 as uuidv4 } from "uuid";
 
 const router = express.Router();
 
-router.get("/movieList", MOVIE_LIST);
+router.get("/movies", MOVIE_LIST);
 
-router.get("/movieListById/:id", MOVIE_LIST_BY_ID);
+router.get("/movies/:id", MOVIE_LIST_BY_ID);
 
-router.get("/movieListSorted", MOVIE_LIST_SORTED);
+router.get("/movies-sorted", MOVIE_LIST_SORTED);
 
-router.post("/insertMovie", INSERT_MOVIE);
+router.post("/movies", INSERT_MOVIE);
 
-router.delete("/deleteAllMovies", DELETE_ALL_MOVIES);
+router.put("/movies/:id", UPDATE_MOVIE);
+
+// router.delete("/movies", DELETE_ALL_MOVIES);
+
+router.delete("/movies/:id", DELETE_MOVIE_BY_ID);
 
 export default router;
