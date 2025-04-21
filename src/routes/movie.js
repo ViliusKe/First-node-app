@@ -20,8 +20,6 @@ router.post("/movies", INSERT_MOVIE);
 
 router.put("/movies/:id", UPDATE_MOVIE);
 
-// router.delete("/movies", DELETE_ALL_MOVIES);
-
 router.delete("/movies/:id", DELETE_MOVIE_BY_ID);
 
 export default router;

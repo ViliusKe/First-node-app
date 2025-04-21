@@ -1,6 +1,7 @@
 import express from "express";
 import "dotenv/config";
 import movieRouter from "./src/routes/movie.js";
+import userRouter from "./src/routes/user.js";
 import mongoose from "mongoose";
 
 const app = express();
@@ -15,6 +16,7 @@ mongoose
   });
 
 app.use(movieRouter);
+app.use(userRouter);
 
 app.use((req, res) => {
   return res.status(404).json({ message: "Endpoint does not exist" });
