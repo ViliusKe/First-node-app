@@ -20,6 +20,7 @@ const SIGN_UP = async (req, res) => {
 
     return res.status(200).json({
       message: "Signed up successfully",
+      user: response,
     });
   } catch (err) {
     console.log(err);
@@ -31,30 +32,38 @@ const SIGN_UP = async (req, res) => {
 };
 
 const LOGIN = async (req, res) => {
-  const data = req.body;
+  try {
+    const data = req.body;
 
-  const user = await UserModel.findOne({ email: data.email });
+    const user = await UserModel.findOne({ email: data.email });
 
-  if (!user) {
-    return res.status(401).json({ message: "Bad email or password" });
+    if (!user) {
+      return res.status(401).json({ message: "Bad email or password" });
+    }
+
+    const passwordMatch = bcryptjs.compareSync(data.password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ message: "Bad email or password" });
+    }
+
+    const token = jwt.sign(
+      { email: user.email, userId: user.id },
+      process.env.JWT_TOKEN,
+      { expiresIn: "12h" }
+    );
+
+    res.status(200).json({
+      message: "Logged in successfully",
+      jwt: token,
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(400).json({
+      message: "Problems occured",
+    });
   }
-
-  const passwordMatch = bcryptjs.compareSync(data.password, user.password);
-
-  if (!passwordMatch) {
-    return res.status(401).json({ message: "Bad email or password" });
-  }
-
-  const token = jwt.sign(
-    { email: user.email, userId: user.id },
-    process.env.JWT_TOKEN,
-    { expiresIn: "12h" }
-  );
-
-  res.status(200).json({
-    message: "Logged in successfully",
-    jwt: token,
-  });
 };
 
 export { SIGN_UP, LOGIN };

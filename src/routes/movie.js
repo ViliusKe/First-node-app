@@ -7,19 +7,20 @@ import {
   DELETE_MOVIE_BY_ID,
   UPDATE_MOVIE,
 } from "../controllers/movie.js";
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/movies", MOVIE_LIST);
+router.get("/movies", auth, MOVIE_LIST);
 
-router.get("/movies/:id", MOVIE_LIST_BY_ID);
+router.get("/movies/:id", auth, MOVIE_LIST_BY_ID);
 
-router.get("/movies-sorted", MOVIE_LIST_SORTED);
+router.get("/movies-sorted", auth, MOVIE_LIST_SORTED);
 
-router.post("/movies", INSERT_MOVIE);
+router.post("/movies", auth, INSERT_MOVIE);
 
-router.put("/movies/:id", UPDATE_MOVIE);
+router.put("/movies/:id", auth, UPDATE_MOVIE);
 
-router.delete("/movies/:id", DELETE_MOVIE_BY_ID);
+router.delete("/movies/:id", auth, DELETE_MOVIE_BY_ID);
 
 export default router;
