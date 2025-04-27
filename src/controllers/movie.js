@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const MOVIE_LIST = async (req, res) => {
   try {
-    const response = await MovieModel.find();
+    const response = await MovieModel.find({ userId: req.body.userId });
 
     return res.status(200).json({
       movies: response,
@@ -19,6 +19,20 @@ const MOVIE_LIST = async (req, res) => {
 
 const MOVIE_LIST_BY_ID = async (req, res) => {
   try {
+    const task = await MovieModel.findOne({ id: req.params.id });
+
+    if (!task) {
+      return res.status(404).json({
+        message: `Movie with id ${req.params.id} does not exist`,
+      });
+    }
+
+    if (task.userId !== req.body.userId) {
+      return res.status(403).json({
+        message: "This task does not belong to you",
+      });
+    }
+
     const response = await MovieModel.findOne({ id: req.params.id });
 
     if (!response) {
@@ -41,7 +55,7 @@ const MOVIE_LIST_BY_ID = async (req, res) => {
 
 const MOVIE_LIST_SORTED = async (req, res) => {
   try {
-    const response = await MovieModel.find();
+    const response = await MovieModel.find({ userId: req.body.userId });
     const sortedMovies = [...response].sort((a, b) => b.raiting - a.raiting);
 
     return res.status(200).json({
@@ -60,6 +74,7 @@ const INSERT_MOVIE = async (req, res) => {
   try {
     const movie = new MovieModel({
       id: uuidv4(),
+      userId: req.body.userId,
       title: req.body.title,
       raiting: req.body.raiting,
       description: req.body.description,
@@ -82,6 +97,20 @@ const INSERT_MOVIE = async (req, res) => {
 
 const DELETE_MOVIE_BY_ID = async (req, res) => {
   try {
+    const task = await MovieModel.findOne({ id: req.params.id });
+
+    if (!task) {
+      return res.status(404).json({
+        message: `Movie with id ${req.params.id} does not exist`,
+      });
+    }
+
+    if (task.userId !== req.body.userId) {
+      return res.status(403).json({
+        message: "This task does not belong to you",
+      });
+    }
+
     const response = await MovieModel.deleteOne({ id: req.params.id });
 
     if (!response) {
@@ -105,6 +134,20 @@ const DELETE_MOVIE_BY_ID = async (req, res) => {
 
 const UPDATE_MOVIE = async (req, res) => {
   try {
+    const task = await MovieModel.findOne({ id: req.params.id });
+
+    if (!task) {
+      return res.status(404).json({
+        message: `Movie with id ${req.params.id} does not exist`,
+      });
+    }
+
+    if (task.userId !== req.body.userId) {
+      return res.status(403).json({
+        message: "This task does not belong to you",
+      });
+    }
+
     const response = await MovieModel.findOneAndUpdate(
       { id: req.params.id },
       { ...req.body },

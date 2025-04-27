@@ -8,6 +8,8 @@ import {
   UPDATE_MOVIE,
 } from "../controllers/movie.js";
 import auth from "../middleware/auth.js";
+import validate from "../middleware/validation.js";
+import createTaskSchema from "../schemas/movie.js";
 
 const router = express.Router();
 
@@ -17,7 +19,7 @@ router.get("/movies/:id", auth, MOVIE_LIST_BY_ID);
 
 router.get("/movies-sorted", auth, MOVIE_LIST_SORTED);
 
-router.post("/movies", auth, INSERT_MOVIE);
+router.post("/movies", validate(createTaskSchema), auth, INSERT_MOVIE);
 
 router.put("/movies/:id", auth, UPDATE_MOVIE);
 
